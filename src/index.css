@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -11,9 +13,9 @@
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --sans: 'Space Mono', monospace;
+  --heading: 'Orbitron', sans-serif;
+  --mono: 'Space Mono', monospace;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
@@ -27,26 +29,6 @@
 
   @media (max-width: 1024px) {
     font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
   }
 }
 
@@ -77,35 +59,265 @@ h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
+
   @media (max-width: 1024px) {
     font-size: 36px;
     margin: 20px 0;
   }
 }
+
 h2 {
   font-size: 24px;
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
+
   @media (max-width: 1024px) {
     font-size: 20px;
   }
 }
+
 p {
   margin: 0;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+.scroll-container {
+  position: relative;
+  height: 250vh;
+  view-timeline-name: --section-timeline;
+  view-timeline-axis: block;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
+.sticky-wrapper {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.carousel-scroller-viewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 40px;
+  width: max-content;
+  padding: 0 calc(50% - 200px);
+  /* Keeps cards centered */
+  box-sizing: border-box;
+  will-change: transform;
+
+  /* Native CSS Scroll-Driven Horizontal translation */
+  animation: horizontal-scroll linear both;
+  animation-timeline: --section-timeline;
+  animation-range: contain 0% contain 100%;
+}
+
+@keyframes horizontal-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(calc(-100% + 100vw), 0, 0);
+  }
+}
+
+.carousel-item {
+  flex: 0 0 400px;
+  width: 400px;
+  perspective: 1200px;
+  will-change: transform, opacity;
+  box-sizing: border-box;
+
+  /* Native CSS Scroll-Driven Scaling */
+  view-timeline: --item-timeline inline;
+  animation: carousel-scale auto linear both;
+  animation-timeline: --item-timeline;
+  animation-range: cover 0% cover 100%;
+}
+
+@keyframes carousel-scale {
+  0% {
+    transform: scale(0.9) translate3d(0, 0, 0);
+    opacity: 0.55;
+  }
+
+  50% {
+    transform: scale(1.06) translate3d(0, -15px, 0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.9) translate3d(0, 0, 0);
+    opacity: 0.55;
+  }
+}
+
+/* Base Card Styles */
+.carousel-card {
+  position: relative;
   background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  overflow: hidden;
+  height: 520px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.4s ease;
+  cursor: pointer;
+  backface-visibility: hidden;
+  box-sizing: border-box;
+}
+
+.carousel-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 30px 60px rgba(170, 59, 255, 0.2);
+}
+
+.card-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 55%;
+  overflow: hidden;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.carousel-card:hover .card-image {
+  transform: scale(1.08);
+}
+
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.85) 100%);
+  opacity: 0.8;
+  transition: opacity 0.4s ease;
+}
+
+.carousel-card:hover .card-overlay {
+  opacity: 0.95;
+}
+
+.card-content {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: flex-start;
+  text-align: left;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  box-sizing: border-box;
+}
+
+.card-caption {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent);
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.card-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: var(--text-h);
+  line-height: 1.25;
+}
+
+.card-description {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  opacity: 0.85;
+}
+
+/* User Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  .carousel-item {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .card-image {
+    transition: none !important;
+  }
+
+  .carousel-card:hover .card-image {
+    transform: none !important;
+  }
+}
+
+.carousel-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.hint-arrow {
+  width: 18px;
+  height: 18px;
+  animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(6px);
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel-track {
+    padding: 0 calc(50% - 140px);
+    gap: 20px;
+  }
+
+  .carousel-item {
+    flex: 0 0 280px;
+    width: 280px;
+  }
+
+  .carousel-card {
+    height: 440px;
+  }
+
+  .card-content {
+    padding: 20px;
+  }
 }
