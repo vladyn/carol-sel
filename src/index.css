@@ -107,7 +107,7 @@ p {
   /* Native CSS Scroll-Driven Horizontal translation */
   animation: horizontal-scroll linear both;
   animation-timeline: --section-timeline;
-  animation-range: contain 0% contain 100%;
+  animation-range: 0%  100%;
 }
 
 @keyframes horizontal-scroll {
@@ -131,7 +131,7 @@ p {
   view-timeline: --item-timeline inline;
   animation: carousel-scale auto linear both;
   animation-timeline: --item-timeline;
-  animation-range: cover 0% cover 100%;
+  animation-range: 0%  100%;
 }
 
 @keyframes carousel-scale {
