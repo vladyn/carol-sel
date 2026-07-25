@@ -27,6 +27,24 @@ function App() {
       title: 'Crystal Sanctuary',
       description: 'Deep beneath the surface lies a cathedral-sized cavern adorned with massive glowing crystals. An explorer walks a narrow path showcasing the scale.',
     },
+    {
+      image: 'https://picsum.photos/seed/picsum/200/300',
+      caption: 'Random',
+      title: 'Placeholder',
+      description: 'A placeholder image for demonstration purposes.',
+    },
+    {
+      image: 'https://picsum.photos/seed/picsum/400/600',
+      caption: 'Random',
+      title: 'Placeholder',
+      description: 'A placeholder image for demonstration purposes.'
+    },
+    {
+      image: 'https://picsum.photos/200/300',
+      caption: 'Random',
+      title: 'Placeholder',
+      description: 'A placeholder image for demonstration purposes.'
+    }
   ];
 
   return (
