@@ -58,8 +58,7 @@ export const Carousel: React.FC<CarouselProps> = ({ items }) => {
         const entryCenter = entryRect.left + entryRect.width / 2;
 
         const cardProgress = entryCenter / window.innerWidth;
-        const clampedCardProgress = Math.max(0, Math.min(1, cardProgress));
-        animation.currentTime = clampedCardProgress;
+        animation.currentTime = Math.max(0, Math.min(1, cardProgress));
       });
     };
 
