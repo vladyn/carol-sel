@@ -16,6 +16,7 @@ export const Carousel: React.FC<CarouselProps> = ({ items }) => {
   const trackRef = useRef<HTMLDivElement>(null);
   const isResetting = useRef(false);
 
+  // Spread the strips of items across the carousel.
   const carouselItems = useMemo(() => {
     if (items.length === 0) return items;
     return Array.from({ length: COPIES }, () => items).flat();
@@ -61,7 +62,7 @@ export const Carousel: React.FC<CarouselProps> = ({ items }) => {
       const translateStart = copyWidth;
       const loopDistance = copyWidth;
 
-      // Deliberately unclamped: once progress crosses 0 or 1 we jump the
+      // Deliberately unclamped: once progress crosses 0 or 1, we jump the
       // real scroll position by one lap's worth of pixels. Because every
       // copy renders identical content, the jump lands on a pixel-identical
       // frame, so it reads as continuous, infinite motion.
