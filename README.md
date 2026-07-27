@@ -2,6 +2,10 @@
 
 A horizontal card carousel driven entirely by vertical page scroll. As you scroll down the page, the carousel section pins in place and cards slide through; reaching either end silently wraps back around, so the motion loops infinitely in both directions without ever feeling like it stopped.
 
+## Live Demo
+
+[https://carol-j65nzywq5-vladyns-projects.vercel.app/](https://carol-j65nzywq5-vladyns-projects.vercel.app/)
+
 ## Features
 
 - Scroll-only interaction — no buttons, dots, or autoplay; the carousel advances purely from the user's vertical scroll (mouse wheel, trackpad, or touch)
