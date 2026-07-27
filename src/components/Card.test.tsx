@@ -1,7 +1,8 @@
-import React, { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
 import { Card } from './Card';
 import type { CardProps } from './Card';
 import { describe, it, expect, afterEach } from 'vitest';
+import '@testing-library/jest-dom';
 
 afterEach(() => {
   cleanup();

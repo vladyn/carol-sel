@@ -56,6 +56,7 @@ beforeEach(() => {
         currentTime: 0,
     }) as unknown as typeof Element.prototype.animate;
 
+    // @ts-ignore
     window.scrollBy = vi.fn();
 
     getRectMock = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect');
