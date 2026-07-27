@@ -8,6 +8,7 @@ function App() {
       caption: 'Futuristic',
       title: 'Neon Metropolis',
       description: 'A sprawling cyberpunk cityscape washed in brilliant neon light, showcasing towering skyscrapers and rain-slicked streets reflecting the glow.',
+      className: 'neon-card-first',
     },
     {
       image: '/assets/cyberpunk_forest.jpg',

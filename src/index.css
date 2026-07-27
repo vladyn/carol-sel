@@ -14,7 +14,6 @@
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
   --sans: 'Space Mono', monospace;
-  --heading: 'Orbitron', sans-serif;
   --mono: 'Space Mono', monospace;
 
   font: 18px/145% var(--sans);
@@ -38,35 +37,6 @@
 
 body {
   margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
 }
 
 p {
@@ -107,7 +77,7 @@ p {
   /* Native CSS Scroll-Driven Horizontal translation */
   animation: horizontal-scroll linear both;
   animation-timeline: --section-timeline;
-  animation-range: 0%  100%;
+  animation-range: 0  100%;
 }
 
 @keyframes horizontal-scroll {
@@ -131,7 +101,7 @@ p {
   view-timeline: --item-timeline inline;
   animation: carousel-scale auto linear both;
   animation-timeline: --item-timeline;
-  animation-range: 0%  100%;
+  animation-range: 0  100%;
 }
 
 @keyframes carousel-scale {
