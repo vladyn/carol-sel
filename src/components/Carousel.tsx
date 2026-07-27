@@ -66,6 +66,7 @@ export const Carousel: React.FC<CarouselProps> = ({ items }) => {
       // real scroll position by one lap's worth of pixels. Because every
       // copy renders identical content, the jump lands on a pixel-identical
       // frame, so it reads as continuous, infinite motion.
+      // this, however, lacks the infinite scroll in the opposite direction.
       const rawProgress = -containerRect.top / scrollHeight;
 
       if (rawProgress >= 1 || rawProgress < 0) {

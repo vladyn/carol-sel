@@ -14,7 +14,7 @@
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
   --sans: 'Space Mono', monospace;
-  --heading: 'Orbitron', sans-serif;
+  --heading: 'Orbitron', Arial, sans-serif;
   --mono: 'Space Mono', monospace;
 
   font: 18px/145% var(--sans);
@@ -42,7 +42,7 @@ body {
 
 h1,
 h2 {
-  font-family: var(--heading);
+  font-family: var(--heading), sans-serif;
   font-weight: 500;
   color: var(--text-h);
 }
@@ -107,7 +107,7 @@ p {
   /* Native CSS Scroll-Driven Horizontal translation */
   animation: horizontal-scroll linear both;
   animation-timeline: --section-timeline;
-  animation-range: 0%  100%;
+  animation-range: 0  100%;
 }
 
 @keyframes horizontal-scroll {
@@ -131,7 +131,7 @@ p {
   view-timeline: --item-timeline inline;
   animation: carousel-scale auto linear both;
   animation-timeline: --item-timeline;
-  animation-range: 0%  100%;
+  animation-range: 0  100%;
 }
 
 @keyframes carousel-scale {
@@ -280,6 +280,11 @@ p {
   width: 18px;
   height: 18px;
   animation: bounce 1.5s infinite;
+}
+
+.neon-card-first {
+  animation-delay: 0.5s;
+  border-color: var(--accent);
 }
 
 @keyframes bounce {

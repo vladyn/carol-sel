@@ -1,33 +1,46 @@
-# React + TypeScript + Vite
+# Infinite Scroll Carousel
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A horizontal card carousel driven entirely by vertical page scroll. As you scroll down the page, the carousel section pins in place and cards slide through; reaching either end silently wraps back around, so the motion loops infinitely in both directions without ever feeling like it stopped.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Scroll-only interaction — no buttons, dots, or autoplay; the carousel advances purely from the user's vertical scroll (mouse wheel, trackpad, or touch)
+- Seamless infinite loop in both directions via duplicated item copies and imperceptible scroll-position resets
+- Per-card scale/opacity animation driven by the Web Animations API, scrubbed in sync with scroll position
+- Built with React + TypeScript
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Prerequisites
+- Node.js 18+
+- npm (or pnpm/yarn — swap the commands below accordingly)
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+### Install
+```bash
+npm install
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
-# carol-sel
+### Run in development
+```bash
+npm run dev
+```
+Starts a local dev server with hot reload.
+
+### Build for production
+```bash
+npm run build
+```
+Outputs a production-ready bundle to `dist/`.
+
+### Preview the production build
+```bash
+npm run preview
+```
+
+### Run tests
+```bash
+npm run test
+```
+Runs the Vitest suite (`jsdom` environment) covering carousel scroll/wrap behavior and card rendering.
+
+## Project Structure
