@@ -15,9 +15,7 @@ const items: CardProps[] = [
 ];
 
 const ITEM_WIDTH = 300;
-const CONTAINER_HEIGHT = 3000;
 const VIEWPORT_HEIGHT = 800;
-const SCROLL_HEIGHT = CONTAINER_HEIGHT - VIEWPORT_HEIGHT; // 2200
 
 function makeRect(partial: Partial<DOMRect>): DOMRect {
     return {
@@ -29,14 +27,8 @@ function makeRect(partial: Partial<DOMRect>): DOMRect {
 
 let getRectMock: ReturnType<typeof vi.spyOn>;
 
-// Places container.top wherever `rawProgress = -top / scrollHeight` yields
-// the given progress, mirroring the component's own math exactly.
-const setProgress = (progress: number) => {
-    const top = -progress * SCROLL_HEIGHT;
+const mockRects = () => {
     getRectMock.mockImplementation(function (this: HTMLElement) {
-        if (this.classList.contains('scroll-container')) {
-            return makeRect({ top, height: CONTAINER_HEIGHT });
-        }
         if (this.classList.contains('carousel-item')) {
             return makeRect({ left: 0, width: ITEM_WIDTH });
         }
@@ -56,11 +48,8 @@ beforeEach(() => {
         currentTime: 0,
     }) as unknown as typeof Element.prototype.animate;
 
-    // @ts-ignore
-    window.scrollBy = vi.fn();
-
     getRectMock = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect');
-    setProgress(0);
+    mockRects();
 });
 
 afterEach(() => {
@@ -81,10 +70,11 @@ describe('Carousel', () => {
         expect(container.querySelectorAll('.carousel-item')).toHaveLength(0);
     });
 
-    it('translates the track in proportion to scroll progress', () => {
+    it('translates the track in proportion to wheel progress', () => {
         render(<Carousel items={items} />);
-        setProgress(0.5);
-        window.dispatchEvent(new Event('scroll'));
+        document.querySelector('.scroll-container')!.dispatchEvent(
+            new WheelEvent('wheel', { deltaY: VIEWPORT_HEIGHT, cancelable: true }),
+        );
 
         const copyWidth = items.length * ITEM_WIDTH; // 900
         const expectedTranslate = copyWidth + 0.5 * copyWidth; // 1350
@@ -94,38 +84,33 @@ describe('Carousel', () => {
         expect(parseFloat(match![1])).toBeCloseTo(-expectedTranslate, 2);
     });
 
-    it('wraps forward the instant progress reaches 1', () => {
+    it('wraps forward without changing document scroll position', () => {
         render(<Carousel items={items} />);
-        setProgress(1); // exact boundary — no margin in this version
-        window.dispatchEvent(new Event('scroll'));
+        const container = document.querySelector('.scroll-container')!;
+        container.dispatchEvent(new WheelEvent('wheel', { deltaY: VIEWPORT_HEIGHT * 2, cancelable: true }));
 
-        expect(window.scrollBy).toHaveBeenCalledWith(0, -SCROLL_HEIGHT);
+        const match = getTrack().style.transform.match(/translate3d\((-?\d+(\.\d+)?)px/);
+        expect(parseFloat(match![1])).toBeCloseTo(-items.length * ITEM_WIDTH, 2);
     });
 
-    it('does not wrap just below the forward boundary', () => {
+    it('wraps backward from the first frame', () => {
         render(<Carousel items={items} />);
-        setProgress(0.999);
-        window.dispatchEvent(new Event('scroll'));
+        const event = new WheelEvent('wheel', { deltaY: -VIEWPORT_HEIGHT, cancelable: true });
+        document.querySelector('.scroll-container')!.dispatchEvent(event);
 
-        expect(window.scrollBy).not.toHaveBeenCalled();
+        const match = getTrack().style.transform.match(/translate3d\((-?\d+(\.\d+)?)px/);
+        expect(parseFloat(match![1])).toBeCloseTo(-(items.length * ITEM_WIDTH * 1.5), 2);
+        expect(event.defaultPrevented).toBe(true);
     });
 
-    it('wraps backward the instant progress dips below 0', () => {
-        render(<Carousel items={items} />);
-        setProgress(-0.001);
-        window.dispatchEvent(new Event('scroll'));
-
-        expect(window.scrollBy).toHaveBeenCalledWith(0, SCROLL_HEIGHT);
-    });
-
-    it('removes scroll and resize listeners on unmount', () => {
+    it('removes input and resize listeners on unmount', () => {
         const removeSpy = vi.spyOn(window, 'removeEventListener');
         const { unmount } = render(<Carousel items={items} />);
+        const container = document.querySelector('.scroll-container')!;
+        const containerRemoveSpy = vi.spyOn(container, 'removeEventListener');
         unmount();
 
-        expect(removeSpy).toHaveBeenCalledWith('scroll', expect.any(Function));
         expect(removeSpy).toHaveBeenCalledWith('resize', expect.any(Function));
-        // No 'wheel' listener exists in this version.
-        expect(removeSpy).not.toHaveBeenCalledWith('wheel', expect.any(Function));
+        expect(containerRemoveSpy).toHaveBeenCalledWith('wheel', expect.any(Function));
     });
 });
