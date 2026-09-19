@@ -45,9 +45,7 @@ p {
 
 .scroll-container {
   position: relative;
-  min-height: 300vh;
-  view-timeline-name: --section-timeline;
-  view-timeline-axis: block;
+  min-height: 100vh;
 }
 
 .sticky-wrapper {
@@ -73,21 +71,6 @@ p {
   /* Keeps cards centered */
   box-sizing: border-box;
   will-change: transform;
-
-  /* Native CSS Scroll-Driven Horizontal translation */
-  animation: horizontal-scroll linear both;
-  animation-timeline: --section-timeline;
-  animation-range: 0  100%;
-}
-
-@keyframes horizontal-scroll {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(calc(-100% + 100vw), 0, 0);
-  }
 }
 
 .carousel-item {

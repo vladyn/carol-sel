@@ -10,11 +10,14 @@ interface CarouselProps {
 // either side of the "active" lap — this is what makes the scroll
 // reset below imperceptible.
 const COPIES = 3;
+const LAPS_PER_VIEWPORT = 2;
+
+const normalizeProgress = (progress: number) => ((progress % 1) + 1) % 1;
 
 export const Carousel: React.FC<CarouselProps> = ({ items }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const isResetting = useRef(false);
+  const progressRef = useRef(0);
 
   // Spread the strips of items across the carousel.
   const carouselItems = useMemo(() => {
@@ -46,40 +49,15 @@ export const Carousel: React.FC<CarouselProps> = ({ items }) => {
       animations.set(entry, animation);
     });
 
-    const tick = () => {
-      if (isResetting.current) return;
-
-      const containerRect = container.getBoundingClientRect();
-      const scrollHeight = containerRect.height - window.innerHeight;
-      if (scrollHeight <= 0) return;
-
+    const render = () => {
       const itemWidth = entries[0].getBoundingClientRect().width;
       const gap = parseFloat(getComputedStyle(track).gap) || 0;
       const copyWidth = items.length * (itemWidth + gap);
 
       // The middle copy is the "active" lap. translateStart skips the
       // leading copy entirely; loopDistance is exactly one copy's width.
-      const translateStart = copyWidth;
-      const loopDistance = copyWidth;
 
-      // Deliberately unclamped: once progress crosses 0 or 1, we jump the
-      // real scroll position by one lap's worth of pixels. Because every
-      // copy renders identical content, the jump lands on a pixel-identical
-      // frame, so it reads as continuous, infinite motion.
-      // this, however, lacks the infinite scroll in the opposite direction.
-      const rawProgress = -containerRect.top / scrollHeight;
-
-      if (rawProgress >= 1 || rawProgress < 0) {
-        isResetting.current = true;
-        window.scrollBy(0, rawProgress >= 1 ? -scrollHeight : scrollHeight);
-        requestAnimationFrame(() => {
-          isResetting.current = false;
-          tick();
-        });
-        return;
-      }
-
-      const translate = translateStart + rawProgress * loopDistance;
+      const translate = copyWidth + progressRef.current * copyWidth;
       track.style.transform = `translate3d(${-translate}px, 0, 0)`;
 
       entries.forEach((entry) => {
@@ -93,14 +71,54 @@ export const Carousel: React.FC<CarouselProps> = ({ items }) => {
       });
     };
 
-    window.addEventListener('scroll', tick, { passive: true });
-    window.addEventListener('resize', tick);
+    const advance = (deltaY: number) => {
+      // Keep the position virtual. Unlike document scroll, this value can
+      // cross either boundary, so both directions wrap at the same instant.
+      const pixelsPerLap = Math.max(window.innerHeight * LAPS_PER_VIEWPORT, 1);
+      progressRef.current = normalizeProgress(progressRef.current + deltaY / pixelsPerLap);
+      render();
+    };
 
-    tick();
+    const handleWheel = (event: WheelEvent) => {
+      if (event.deltaY === 0) return;
+      event.preventDefault();
+      const delta = event.deltaMode === WheelEvent.DOM_DELTA_LINE
+        ? event.deltaY * 16
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+          ? event.deltaY * window.innerHeight
+          : event.deltaY;
+      advance(delta);
+    };
+
+    let touchY: number | null = null;
+    const handleTouchStart = (event: TouchEvent) => {
+      touchY = event.touches[0]?.clientY ?? null;
+    };
+    const handleTouchMove = (event: TouchEvent) => {
+      const nextTouchY = event.touches[0]?.clientY;
+      if (touchY === null || nextTouchY === undefined) return;
+      event.preventDefault();
+      advance(touchY - nextTouchY);
+      touchY = nextTouchY;
+    };
+    const handleTouchEnd = () => {
+      touchY = null;
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd);
+    window.addEventListener('resize', render);
+
+    render();
 
     return () => {
-      window.removeEventListener('scroll', tick);
-      window.removeEventListener('resize', tick);
+      container.removeEventListener('wheel', handleWheel);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('resize', render);
       animations.forEach((animation) => animation.cancel());
     };
   }, [items]);
