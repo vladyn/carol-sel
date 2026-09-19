@@ -56,10 +56,8 @@ export const Carousel: React.FC<CarouselProps> = ({ items }) => {
 
       // The middle copy is the "active" lap. translateStart skips the
       // leading copy entirely; loopDistance is exactly one copy's width.
-      const translateStart = copyWidth;
-      const loopDistance = copyWidth;
 
-      const translate = translateStart + progressRef.current * loopDistance;
+      const translate = copyWidth + progressRef.current * copyWidth;
       track.style.transform = `translate3d(${-translate}px, 0, 0)`;
 
       entries.forEach((entry) => {
